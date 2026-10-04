@@ -1,7 +1,7 @@
 # Grand Line Dashboard — Bug Tracker
 | ID | Priority | Issue | Status | Phase |
 |---|---|---|---|---|
-| BUG-001 | High | alert() used for UI feedback | Open | 3 |
+| BUG-001 | High | alert() used for UI feedback | Closed | 3 |
 | BUG-002 | High | Settings control is not functional | Open | 3 |
 | BUG-003 | High | Links/categories hardcoded in HTML | Closed | 2 |
 | BUG-004 | Medium | nth-child transparency hacks are brittle | Open | 1 |

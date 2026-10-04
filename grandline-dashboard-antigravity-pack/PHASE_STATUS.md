@@ -1,13 +1,13 @@
 # Grand Line Dashboard — Phase Status
 Current phase: 3 — UI/state system
-Status: IN PROGRESS (P3.1 Verified)
+Status: IN PROGRESS (P3.1, P3.2 Verified)
 
 | Phase | Name | Status |
 |---|---|---|
 | 0 | Baseline and safety | COMPLETED |
 | 1 | Refactor | COMPLETE |
 | 2 | Config-driven dashboard | COMPLETE |
-| 3 | UI/state system | IN PROGRESS (P3.1 Verified) |
+| 3 | UI/state system | IN PROGRESS (P3.1, P3.2 Verified) |
 | 4 | Customization | NOT STARTED |
 | 5 | Search | NOT STARTED |
 | 6 | Widgets | NOT STARTED |

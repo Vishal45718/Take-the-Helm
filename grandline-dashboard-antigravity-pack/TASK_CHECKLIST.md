@@ -19,7 +19,7 @@
 
 ## Phase 3
 - [x] Versioned local state layer (Verified)
-- [ ] Replace alert() with toast/modal
+- [x] Replace alert() with toast/modal (Verified)
 - [ ] Functional settings panel
 - [ ] Reset/default handling
 
