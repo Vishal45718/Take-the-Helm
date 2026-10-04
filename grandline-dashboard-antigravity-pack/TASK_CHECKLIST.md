@@ -20,24 +20,24 @@
 ## Phase 3
 - [x] Versioned local state layer (Verified)
 - [x] Replace alert() with toast/modal (Verified)
-- [ ] Functional settings panel
-- [ ] Reset/default handling
+- [x] Functional settings panel
+- [x] Reset/default handling
 
 ## Phase 4
-- [ ] Wallpaper picker/upload
-- [ ] Accent color
-- [ ] Glass opacity
-- [ ] Blur
-- [ ] Background overlay
+- [x] Wallpaper picker/upload
+- [x] Accent color
+- [x] Glass opacity
+- [x] Blur
+- [x] Background overlay
 - [ ] Widget visibility
-- [ ] Persist preferences
+- [x] Persist preferences
 
 ## Phase 5
-- [ ] Google search
-- [ ] DuckDuckGo
-- [ ] Bing
-- [ ] Optional Brave
-- [ ] Provider selector + persistence
+- [x] Google search
+- [x] DuckDuckGo
+- [x] Bing
+- [x] Optional Brave
+- [x] Provider selector + persistence
 - [ ] Search keyboard UX
 
 ## Phase 6

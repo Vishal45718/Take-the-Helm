@@ -3,10 +3,19 @@
 const STATE_KEY = "grandline_state";
 const STATE_VERSION = 1;
 
+const DEFAULT_PREFERENCES = {
+    wallpaper: "one_piece.jpg",
+    bgOpacity: 0.15,
+    accentColor: "#5fae2d",
+    glassBlur: 11,
+    glassOpacity: 0.29,
+    searchEngine: "google"
+};
+
 const DEFAULT_STATE = {
     version: STATE_VERSION,
     focusSeconds: 0,
-    preferences: {}
+    preferences: { ...DEFAULT_PREFERENCES }
 };
 
 function getLegacyFocusSeconds() {
@@ -43,6 +52,7 @@ function loadState() {
         
         // Merge with defaults to ensure all keys exist
         const state = { ...DEFAULT_STATE, ...data, version: STATE_VERSION };
+        state.preferences = { ...DEFAULT_PREFERENCES, ...(data.preferences || {}) };
         
         // Remove legacy item if it exists and we successfully loaded new state
         try {
@@ -75,5 +85,6 @@ window.AppState = {
     update(updates) {
         this.data = { ...this.data, ...updates };
         this.save();
-    }
+    },
+    defaultPreferences: DEFAULT_PREFERENCES
 };

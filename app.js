@@ -3,15 +3,22 @@
 const searchForm = document.getElementById("searchForm");
 const searchInput = document.getElementById("searchInput");
 
+const searchEngines = {
+    google: "https://www.google.com/search?q=",
+    duckduckgo: "https://duckduckgo.com/?q=",
+    bing: "https://www.bing.com/search?q=",
+    brave: "https://search.brave.com/search?q="
+};
+
 searchForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
     const query = searchInput.value.trim();
     if (!query) return;
 
-    window.location.href =
-        "https://www.google.com/search?q=" +
-        encodeURIComponent(query);
+    const engine = AppState.data.preferences.searchEngine || "google";
+    const baseUrl = searchEngines[engine] || searchEngines.google;
+    window.location.href = baseUrl + encodeURIComponent(query);
 });
 
 document.addEventListener("keydown", (event) => {
@@ -374,8 +381,131 @@ document.getElementById("menuButton").addEventListener("click", () => {
     document.querySelector(".page").classList.toggle("menu-open");
 });
 
+/* ---------------- Settings Panel ---------------- */
+
+function applyPreferences(prefs) {
+    document.documentElement.style.setProperty('--bg-image', `url("${prefs.wallpaper}")`);
+    document.documentElement.style.setProperty('--accent', prefs.accentColor);
+    
+    // Convert hex to rgb for accent-soft
+    const hex = prefs.accentColor.replace('#', '');
+    const r = parseInt(hex.substring(0,2), 16);
+    const g = parseInt(hex.substring(2,4), 16);
+    const b = parseInt(hex.substring(4,6), 16);
+    document.documentElement.style.setProperty('--accent-soft', `rgba(${r}, ${g}, ${b}, 0.22)`);
+    
+    document.documentElement.style.setProperty('--glass-blur', `${prefs.glassBlur}px`);
+    document.documentElement.style.setProperty('--glass-opacity', prefs.glassOpacity);
+    if (prefs.bgOpacity !== undefined) {
+        document.documentElement.style.setProperty('--bg-overlay', prefs.bgOpacity);
+    }
+}
+
+// Apply initially
+applyPreferences(AppState.data.preferences);
+
+function showSettings() {
+    let overlay = document.getElementById('settingsOverlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'settingsOverlay';
+        overlay.className = 'toast-overlay';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        
+        overlay.innerHTML = `
+            <div class="toast-modal" style="text-align: left; max-width: 450px;">
+                <h2 style="margin-top: 0; margin-bottom: 20px;">Settings</h2>
+                <div class="settings-form">
+                    <div class="settings-row">
+                        <label class="settings-label">Wallpaper URL</label>
+                        <input type="text" id="setWallpaper" class="settings-input" style="flex:1;">
+                    </div>
+                    <div class="settings-row">
+                        <label class="settings-label">Background Overlay</label>
+                        <input type="range" id="setBgOpacity" min="0" max="1" step="0.05" class="settings-input" style="flex:1;">
+                    </div>
+                    <div class="settings-row">
+                        <label class="settings-label">Accent Color</label>
+                        <input type="color" id="setAccentColor" class="settings-input">
+                    </div>
+                    <div class="settings-row">
+                        <label class="settings-label">Glass Blur</label>
+                        <input type="range" id="setGlassBlur" min="0" max="40" step="1" class="settings-input" style="flex:1;">
+                    </div>
+                    <div class="settings-row">
+                        <label class="settings-label">Glass Opacity</label>
+                        <input type="range" id="setGlassOpacity" min="0" max="1" step="0.05" class="settings-input" style="flex:1;">
+                    </div>
+                    <div class="settings-row">
+                        <label class="settings-label">Search Engine</label>
+                        <select id="setSearchEngine" class="settings-input" style="flex:1;">
+                            <option value="google">Google</option>
+                            <option value="duckduckgo">DuckDuckGo</option>
+                            <option value="bing">Bing</option>
+                            <option value="brave">Brave</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="settings-actions">
+                    <button class="settings-btn" id="settingsResetBtn">Reset</button>
+                    <button class="settings-btn" id="settingsCloseBtn">Close</button>
+                    <button class="settings-btn primary" id="settingsApplyBtn">Apply</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        
+        const closeOverlay = () => overlay.classList.remove('show');
+        
+        document.getElementById('settingsCloseBtn').addEventListener('click', closeOverlay);
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeOverlay();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && overlay.classList.contains('show')) {
+                closeOverlay();
+            }
+        });
+        
+        document.getElementById('settingsApplyBtn').addEventListener('click', () => {
+            const newPrefs = {
+                wallpaper: document.getElementById('setWallpaper').value,
+                bgOpacity: Number(document.getElementById('setBgOpacity').value),
+                accentColor: document.getElementById('setAccentColor').value,
+                glassBlur: Number(document.getElementById('setGlassBlur').value),
+                glassOpacity: Number(document.getElementById('setGlassOpacity').value),
+                searchEngine: document.getElementById('setSearchEngine').value
+            };
+            AppState.update({ preferences: newPrefs });
+            applyPreferences(newPrefs);
+            closeOverlay();
+            showToast("Settings applied!");
+        });
+        
+        document.getElementById('settingsResetBtn').addEventListener('click', () => {
+            const defaults = AppState.defaultPreferences;
+            document.getElementById('setWallpaper').value = defaults.wallpaper;
+            document.getElementById('setBgOpacity').value = defaults.bgOpacity !== undefined ? defaults.bgOpacity : 0.15;
+            document.getElementById('setAccentColor').value = defaults.accentColor;
+            document.getElementById('setGlassBlur').value = defaults.glassBlur;
+            document.getElementById('setGlassOpacity').value = defaults.glassOpacity;
+            document.getElementById('setSearchEngine').value = defaults.searchEngine;
+        });
+    }
+    
+    // Load current values
+    const prefs = AppState.data.preferences;
+    document.getElementById('setWallpaper').value = prefs.wallpaper;
+    document.getElementById('setBgOpacity').value = prefs.bgOpacity !== undefined ? prefs.bgOpacity : 0.15;
+    document.getElementById('setAccentColor').value = prefs.accentColor;
+    document.getElementById('setGlassBlur').value = prefs.glassBlur;
+    document.getElementById('setGlassOpacity').value = prefs.glassOpacity;
+    document.getElementById('setSearchEngine').value = prefs.searchEngine;
+    
+    overlay.classList.add('show');
+}
+
 document.getElementById("settingsButton").addEventListener("click", () => {
-    showToast(
-        "Settings are kept simple for now. Edit the categories, links, accent color and wallpaper path directly in index.html."
-    );
+    showSettings();
 });

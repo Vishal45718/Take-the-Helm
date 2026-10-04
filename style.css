@@ -1,12 +1,15 @@
 :root {
-    --glass: rgba(10, 20, 15, 0.29);
-    --glass-strong: rgba(12, 24, 17, 0.40);
+    --glass-opacity: 0.29;
+    --glass-blur: 11px;
+    --glass: rgba(10, 20, 15, var(--glass-opacity));
+    --glass-strong: rgba(12, 24, 17, calc(var(--glass-opacity) + 0.11));
     --glass-border: rgba(255, 255, 255, 0.13);
     --text: rgba(255, 255, 255, 0.96);
     --muted: rgba(255, 255, 255, 0.55);
     --accent: #5fae2d;
     --accent-soft: rgba(95, 174, 45, 0.22);
     --shadow: 0 22px 55px rgba(0, 0, 0, 0.28);
+    --bg-image: url("one_piece.jpg");
 }
 
 * {
@@ -29,8 +32,8 @@ body {
         BlinkMacSystemFont, "Segoe UI", sans-serif;
 
     background:
-        linear-gradient(rgba(5, 14, 9, 0.08), rgba(5, 14, 9, 0.18)),
-        url("one_piece.jpg") 62% center / cover no-repeat fixed;
+        linear-gradient(rgba(5, 14, 9, var(--bg-overlay, 0.15)), rgba(5, 14, 9, var(--bg-overlay, 0.15))),
+        var(--bg-image) 62% center / cover no-repeat fixed;
 }
 
 body::before {
@@ -67,8 +70,8 @@ body::before {
 .panel {
     border: 1px solid var(--glass-border);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.018)), var(--glass);
-    backdrop-filter: blur(11px) saturate(125%);
-    -webkit-backdrop-filter: blur(11px) saturate(125%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(125%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(125%);
     box-shadow: var(--shadow);
 }
 
@@ -693,4 +696,90 @@ body::before {
 .toast-close:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
+}
+
+/* ---------------- Settings Panel ---------------- */
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+    margin-bottom: 24px;
+}
+
+.settings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.settings-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.settings-input {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: 150ms;
+}
+
+.settings-input:focus {
+    border-color: var(--accent);
+}
+
+.settings-input[type="color"] {
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.settings-input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.settings-input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 8px;
+}
+
+.settings-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.settings-btn {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 150ms ease;
+}
+
+.settings-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+}
+
+.settings-btn.primary {
+    background: var(--accent);
+    color: white;
+}
+
+.settings-btn.primary:hover {
+    filter: brightness(1.1);
 }
