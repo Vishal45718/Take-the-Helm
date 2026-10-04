@@ -8,7 +8,7 @@
 ## Phase 1
 - [x] Extract CSS to style.css
 - [x] Extract JS to app.js
-- [ ] Remove dead/duplicate code
+- [x] Remove dead/duplicate code
 - [ ] Verify visual/functional parity
 
 ## Phase 2
