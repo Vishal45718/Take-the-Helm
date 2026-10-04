@@ -1,0 +1,1273 @@
+from pathlib import Path
+
+html = r'''
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grand Line</title>
+
+    <style>
+        :root {
+            --glass: rgba(15, 27, 22, 0.48);
+            --glass-strong: rgba(17, 31, 25, 0.62);
+            --glass-border: rgba(255, 255, 255, 0.11);
+            --text: rgba(255, 255, 255, 0.96);
+            --muted: rgba(255, 255, 255, 0.55);
+            --accent: #5fae2d;
+            --accent-soft: rgba(95, 174, 45, 0.22);
+            --shadow: 0 22px 55px rgba(0, 0, 0, 0.28);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            position: relative;
+            overflow: hidden;
+            color: var(--text);
+            font-family:
+                Inter, ui-sans-serif, system-ui, -apple-system,
+                BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+            background:
+                linear-gradient(rgba(5, 14, 9, 0.20), rgba(5, 14, 9, 0.33)),
+                url("one_piece.jpg") center center / cover no-repeat fixed;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 50% 5%, rgba(255, 255, 255, 0.10), transparent 32%),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.22));
+        }
+
+        .page {
+            position: relative;
+            z-index: 1;
+            width: min(1420px, calc(100vw - 48px));
+            height: calc(100vh - 48px);
+            margin: 24px auto;
+            display: grid;
+            grid-template-rows: 72px 1fr;
+            gap: 18px;
+        }
+
+        .topbar {
+            display: grid;
+            grid-template-columns: 290px minmax(320px, 1fr) auto;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .tabs,
+        .search-shell,
+        .status-bar,
+        .panel {
+            border: 1px solid var(--glass-border);
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.085),
+                    rgba(255, 255, 255, 0.035)), var(--glass);
+            backdrop-filter: blur(22px) saturate(125%);
+            -webkit-backdrop-filter: blur(22px) saturate(125%);
+            box-shadow: var(--shadow);
+        }
+
+        .tabs {
+            height: 56px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px;
+            border-radius: 18px;
+        }
+
+        .tab {
+            border: 0;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.68);
+            height: 44px;
+            padding: 0 22px;
+            border-radius: 14px;
+            font: inherit;
+            font-size: 15px;
+            font-weight: 650;
+            cursor: pointer;
+            transition: 180ms ease;
+        }
+
+        .tab:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .tab.active {
+            color: white;
+            background: rgba(64, 123, 26, 0.64);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        .add-tab {
+            width: 42px;
+            height: 42px;
+            margin-left: auto;
+            border: 0;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.56);
+            border-radius: 12px;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+        }
+
+        .add-tab:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+
+        .search-shell {
+            height: 56px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px 0 17px;
+        }
+
+        .search-shell .search-icon {
+            width: 18px;
+            height: 18px;
+            color: rgba(255, 255, 255, 0.35);
+            flex: none;
+        }
+
+        .search-input {
+            width: 100%;
+            border: 0;
+            outline: none;
+            background: transparent;
+            color: white;
+            font: inherit;
+            font-size: 15px;
+            padding: 0 12px;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.38);
+        }
+
+        .engine {
+            width: 40px;
+            height: 40px;
+            border: 0;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            color: white;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+        }
+
+        .engine:hover {
+            background: rgba(255, 255, 255, 0.11);
+        }
+
+        .google-g {
+            width: 19px;
+            height: 19px;
+            font-size: 18px;
+            font-weight: 800;
+            font-family: Arial, sans-serif;
+            color: #4285f4;
+            line-height: 1;
+            text-align: center;
+        }
+
+        .status-bar {
+            min-width: 310px;
+            height: 56px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            padding: 0 4px;
+        }
+
+        .status-item {
+            height: 44px;
+            min-width: 92px;
+            padding: 4px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2px;
+            border-radius: 14px;
+            text-align: center;
+        }
+
+        .status-label {
+            color: rgba(255, 255, 255, 0.42);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+        }
+
+        .status-value {
+            color: rgba(255, 255, 255, 0.93);
+            font-size: 16px;
+            font-weight: 650;
+            white-space: nowrap;
+        }
+
+        .status-item.time .status-value {
+            font-size: 14px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .content {
+            min-height: 0;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 264px;
+            gap: 18px;
+        }
+
+        .boards {
+            min-height: 0;
+            overflow: auto;
+            padding-right: 3px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+        }
+
+        .boards::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        .boards::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .boards::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.16);
+            border-radius: 999px;
+        }
+
+        .board-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(220px, 1fr));
+            grid-auto-rows: minmax(205px, auto);
+            gap: 18px;
+            align-content: start;
+        }
+
+        .panel {
+            border-radius: 20px;
+            padding: 22px 22px 20px;
+            min-height: 205px;
+        }
+
+        .panel h2 {
+            margin: 0 0 20px;
+            font-size: 17px;
+            font-weight: 650;
+            letter-spacing: -0.02em;
+        }
+
+        .link-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .link-row {
+            display: grid;
+            grid-template-columns: 26px 1fr;
+            align-items: center;
+            gap: 9px;
+            min-height: 34px;
+            padding: 4px 4px 4px 2px;
+            color: rgba(255, 255, 255, 0.84);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: 150ms ease;
+        }
+
+        .link-row:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: white;
+            transform: translateX(2px);
+        }
+
+        .favicon {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            object-fit: cover;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .link-name {
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .side {
+            min-height: 0;
+            display: grid;
+            grid-template-rows: 1fr 1.05fr;
+            gap: 18px;
+        }
+
+        /* Calendar */
+
+        .calendar {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calendar-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 13px;
+        }
+
+        .calendar-title {
+            font-size: 16px;
+            font-weight: 650;
+        }
+
+        .month-switch {
+            display: flex;
+            gap: 3px;
+        }
+
+        .month-btn {
+            width: 26px;
+            height: 26px;
+            border: 0;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.42);
+            border-radius: 8px;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+        }
+
+        .month-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+
+        .weekdays,
+        .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+        }
+
+        .weekdays span {
+            color: rgba(255, 255, 255, 0.36);
+            font-size: 10px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .days {
+            gap: 4px 2px;
+        }
+
+        .day {
+            height: 28px;
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.70);
+            border-radius: 8px;
+        }
+
+        .day.muted {
+            color: rgba(255, 255, 255, 0.18);
+        }
+
+        .day.today {
+            color: white;
+            background: rgba(77, 135, 37, 0.68);
+            font-weight: 700;
+        }
+
+        /* Pomodoro */
+
+        .pomodoro {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pomodoro-tabs {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 21px;
+        }
+
+        .pomo-tab {
+            border: 0;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.28);
+            padding: 8px 10px;
+            border-radius: 10px;
+            font: inherit;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .pomo-tab.active {
+            color: rgba(255, 255, 255, 0.82);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .timer {
+            text-align: center;
+            font-size: 50px;
+            font-weight: 350;
+            letter-spacing: -0.04em;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .dots {
+            display: flex;
+            justify-content: center;
+            gap: 7px;
+            margin: 10px 0 18px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.24);
+        }
+
+        .dot.active {
+            background: rgba(255, 255, 255, 0.62);
+        }
+
+        .pomo-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .circle-btn {
+            width: 45px;
+            height: 45px;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.82);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: 160ms ease;
+        }
+
+        .circle-btn:hover {
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+        .circle-btn.primary {
+            width: 52px;
+            height: 52px;
+            background: rgba(68, 128, 28, 0.76);
+        }
+
+        .circle-btn.primary:hover {
+            background: rgba(74, 145, 28, 0.90);
+        }
+
+        .bottom-right {
+            position: fixed;
+            z-index: 5;
+            right: 20px;
+            bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .mini-icon {
+            width: 38px;
+            height: 38px;
+            border: 0;
+            border-radius: 12px;
+            background: rgba(8, 15, 11, 0.32);
+            color: rgba(255, 255, 255, 0.76);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.09);
+        }
+
+        .mini-icon:hover {
+            background: rgba(255, 255, 255, 0.10);
+            color: white;
+        }
+
+        .project-view {
+            display: none;
+            min-height: 0;
+        }
+
+        .project-view.active {
+            display: block;
+        }
+
+        .project-view .panel {
+            min-height: 0;
+        }
+
+        .project-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .project-item {
+            padding: 18px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .project-item h3 {
+            margin: 0 0 7px;
+            font-size: 15px;
+        }
+
+        .project-item p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 1150px) {
+            .topbar {
+                grid-template-columns: 240px minmax(260px, 1fr);
+            }
+
+            .status-bar {
+                grid-column: 1 / -1;
+                display: none;
+            }
+
+            .page {
+                grid-template-rows: 72px 1fr;
+            }
+
+            .content {
+                grid-template-columns: minmax(0, 1fr) 240px;
+            }
+
+            .board-grid {
+                grid-template-columns: repeat(2, minmax(220px, 1fr));
+            }
+        }
+
+        @media (max-width: 800px) {
+            body {
+                overflow: auto;
+            }
+
+            .page {
+                width: calc(100vw - 24px);
+                height: auto;
+                min-height: calc(100vh - 24px);
+                margin: 12px auto;
+            }
+
+            .topbar {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .tabs {
+                order: 1;
+            }
+
+            .search-shell {
+                order: 2;
+            }
+
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .side {
+                grid-template-rows: auto auto;
+            }
+
+            .board-grid,
+            .project-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <header class="topbar">
+            <div class="tabs">
+                <button class="tab active" data-view="home">Home</button>
+                <button class="tab" data-view="projects">Projects</button>
+
+                <button class="add-tab" id="addProject" title="Add project">
+                    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                        <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.8"
+                            stroke-linecap="round" />
+                    </svg>
+                </button>
+            </div>
+
+            <form class="search-shell" id="searchForm">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="10.8" cy="10.8" r="6.5" stroke="currentColor" stroke-width="1.8" />
+                    <path d="m16 16 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+
+                <input id="searchInput" class="search-input" type="text" placeholder="Search..." autocomplete="off"
+                    autofocus />
+
+                <button class="engine" type="button" id="engineButton" title="Search with Google">
+                    <span class="google-g">G</span>
+                </button>
+            </form>
+
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-label">Local</span>
+                    <span class="status-value" id="locationText">Home</span>
+                </div>
+
+                <div class="status-item">
+                    <span class="status-label">Focus Today</span>
+                    <span class="status-value" id="focusValue">0m</span>
+                </div>
+
+                <div class="status-item time">
+                    <span class="status-label" id="dayLabel">Sun, Oct 4</span>
+                    <span class="status-value" id="timeValue">--:--</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+            <section class="boards" id="homeView">
+                <div class="board-grid">
+                    <section class="panel">
+                        <h2>Work</h2>
+                        <div class="link-list">
+                            <a class="link-row" href="https://mail.google.com" target="_blank" rel="noopener">
+                                <img class="favicon"
+                                    src="https://www.google.com/s2/favicons?domain=mail.google.com&sz=64" alt="">
+                                <span class="link-name">Gmail</span>
+                            </a>
+                            <a class="link-row" href="https://calendar.google.com" target="_blank" rel="noopener">
+                                <img class="favicon"
+                                    src="https://www.google.com/s2/favicons?domain=calendar.google.com&sz=64" alt="">
+                                <span class="link-name">Google Calendar</span>
+                            </a>
+                            <a class="link-row" href="https://slack.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=slack.com&sz=64"
+                                    alt="">
+                                <span class="link-name">Slack</span>
+                            </a>
+                            <a class="link-row" href="https://drive.google.com" target="_blank" rel="noopener">
+                                <img class="favicon"
+                                    src="https://www.google.com/s2/favicons?domain=drive.google.com&sz=64" alt="">
+                                <span class="link-name">Google Drive</span>
+                            </a>
+                            <a class="link-row" href="https://zoom.us" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=zoom.us&sz=64"
+                                    alt="">
+                                <span class="link-name">Zoom</span>
+                            </a>
+                            <a class="link-row" href="https://www.linkedin.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=linkedin.com&sz=64"
+                                    alt="">
+                                <span class="link-name">LinkedIn</span>
+                            </a>
+                        </div>
+                    </section>
+
+                    <section class="panel">
+                        <h2>AI</h2>
+                        <div class="link-list">
+                            <a class="link-row" href="https://chatgpt.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=chatgpt.com&sz=64"
+                                    alt="">
+                                <span class="link-name">ChatGPT</span>
+                            </a>
+                            <a class="link-row" href="https://claude.ai" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=claude.ai&sz=64"
+                                    alt="">
+                                <span class="link-name">Claude</span>
+                            </a>
+                            <a class="link-row" href="https://gemini.google.com" target="_blank" rel="noopener">
+                                <img class="favicon"
+                                    src="https://www.google.com/s2/favicons?domain=gemini.google.com&sz=64" alt="">
+                                <span class="link-name">Gemini</span>
+                            </a>
+                            <a class="link-row" href="https://www.perplexity.ai" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=perplexity.ai&sz=64"
+                                    alt="">
+                                <span class="link-name">Perplexity</span>
+                            </a>
+                            <a class="link-row" href="https://grok.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=grok.com&sz=64"
+                                    alt="">
+                                <span class="link-name">Grok</span>
+                            </a>
+                        </div>
+                    </section>
+
+                    <section class="panel">
+                        <h2>Entertainment</h2>
+                        <div class="link-list">
+                            <a class="link-row" href="https://www.netflix.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=netflix.com&sz=64"
+                                    alt="">
+                                <span class="link-name">Netflix</span>
+                            </a>
+                            <a class="link-row" href="https://www.youtube.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=youtube.com&sz=64"
+                                    alt="">
+                                <span class="link-name">YouTube</span>
+                            </a>
+                            <a class="link-row" href="https://open.spotify.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=spotify.com&sz=64"
+                                    alt="">
+                                <span class="link-name">Spotify</span>
+                            </a>
+                            <a class="link-row" href="https://www.disneyplus.com" target="_blank" rel="noopener">
+                                <img class="favicon"
+                                    src="https://www.google.com/s2/favicons?domain=disneyplus.com&sz=64" alt="">
+                                <span class="link-name">Disney+</span>
+                            </a>
+                            <a class="link-row" href="https://www.hulu.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=hulu.com&sz=64"
+                                    alt="">
+                                <span class="link-name">Hulu</span>
+                            </a>
+                        </div>
+                    </section>
+
+                    <section class="panel">
+                        <h2>Learn</h2>
+                        <div class="link-list">
+                            <a class="link-row" href="https://leetcode.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=leetcode.com&sz=64"
+                                    alt="">
+                                <span class="link-name">LeetCode</span>
+                            </a>
+                            <a class="link-row" href="https://cses.fi/problemset" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=cses.fi&sz=64"
+                                    alt="">
+                                <span class="link-name">CSES</span>
+                            </a>
+                            <a class="link-row" href="https://www.coursera.org" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=coursera.org&sz=64"
+                                    alt="">
+                                <span class="link-name">Coursera</span>
+                            </a>
+                            <a class="link-row" href="https://www.khanacademy.org" target="_blank" rel="noopener">
+                                <img class="favicon"
+                                    src="https://www.google.com/s2/favicons?domain=khanacademy.org&sz=64" alt="">
+                                <span class="link-name">Khan Academy</span>
+                            </a>
+                            <a class="link-row" href="https://en.wikipedia.org" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=wikipedia.org&sz=64"
+                                    alt="">
+                                <span class="link-name">Wikipedia</span>
+                            </a>
+                        </div>
+                    </section>
+
+                    <section class="panel">
+                        <h2>Development</h2>
+                        <div class="link-list">
+                            <a class="link-row" href="https://github.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=github.com&sz=64"
+                                    alt="">
+                                <span class="link-name">GitHub</span>
+                            </a>
+                            <a class="link-row" href="https://stackoverflow.com" target="_blank" rel="noopener">
+                                <img class="favicon"
+                                    src="https://www.google.com/s2/favicons?domain=stackoverflow.com&sz=64" alt="">
+                                <span class="link-name">Stack Overflow</span>
+                            </a>
+                            <a class="link-row" href="https://vercel.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=vercel.com&sz=64"
+                                    alt="">
+                                <span class="link-name">Vercel</span>
+                            </a>
+                            <a class="link-row" href="https://hub.docker.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=docker.com&sz=64"
+                                    alt="">
+                                <span class="link-name">Docker Hub</span>
+                            </a>
+                        </div>
+                    </section>
+
+                    <section class="panel">
+                        <h2>Social</h2>
+                        <div class="link-list">
+                            <a class="link-row" href="https://www.instagram.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=instagram.com&sz=64"
+                                    alt="">
+                                <span class="link-name">Instagram</span>
+                            </a>
+                            <a class="link-row" href="https://x.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=x.com&sz=64" alt="">
+                                <span class="link-name">X</span>
+                            </a>
+                            <a class="link-row" href="https://www.linkedin.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=linkedin.com&sz=64"
+                                    alt="">
+                                <span class="link-name">LinkedIn</span>
+                            </a>
+                            <a class="link-row" href="https://www.reddit.com" target="_blank" rel="noopener">
+                                <img class="favicon" src="https://www.google.com/s2/favicons?domain=reddit.com&sz=64"
+                                    alt="">
+                                <span class="link-name">Reddit</span>
+                            </a>
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            <section class="project-view" id="projectsView">
+                <div class="panel">
+                    <h2>Projects</h2>
+                    <div class="project-list">
+                        <div class="project-item">
+                            <h3>TrainPulse</h3>
+                            <p>Distributed LLM training monitoring, anomaly detection and fault localization.</p>
+                        </div>
+                        <div class="project-item">
+                            <h3>Self-Healing RAG</h3>
+                            <p>Multi-agent orchestration, tool use, persistent memory and human escalation.</p>
+                        </div>
+                        <div class="project-item">
+                            <h3>Recommendation System</h3>
+                            <p>FastAPI, PostgreSQL, Redis, Kafka and FAISS based recommendation platform.</p>
+                        </div>
+                        <div class="project-item">
+                            <h3>AETHER</h3>
+                            <p>Personal web project and landing page workspace.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="side">
+                <section class="panel calendar">
+                    <div class="calendar-head">
+                        <div class="calendar-title" id="monthTitle">October 2026</div>
+                        <div class="month-switch">
+                            <button class="month-btn" id="prevMonth" title="Previous month">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+                                    <path d="m14 6-6 6 6 6" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                            <button class="month-btn" id="nextMonth" title="Next month">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+                                    <path d="m10 6 6 6-6 6" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="weekdays">
+                        <span>Su</span>
+                        <span>Mo</span>
+                        <span>Tu</span>
+                        <span>We</span>
+                        <span>Th</span>
+                        <span>Fr</span>
+                        <span>Sa</span>
+                    </div>
+
+                    <div class="days" id="calendarDays"></div>
+                </section>
+
+                <section class="panel pomodoro">
+                    <div class="pomodoro-tabs">
+                        <button class="pomo-tab active" data-minutes="25">Focus</button>
+                        <button class="pomo-tab" data-minutes="5">Short Break</button>
+                        <button class="pomo-tab" data-minutes="15">Long Break</button>
+                    </div>
+
+                    <div class="timer" id="timer">25:00</div>
+
+                    <div class="dots" id="dots">
+                        <span class="dot active"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+
+                    <div class="pomo-actions">
+                        <button class="circle-btn" id="resetTimer" title="Reset">
+                            <svg viewBox="0 0 24 24" width="19" height="19" fill="none">
+                                <path d="M4 12a8 8 0 1 0 2.2-5.5" stroke="currentColor" stroke-width="1.8"
+                                    stroke-linecap="round" />
+                                <path d="M4 5.5v4.1h4.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+
+                        <button class="circle-btn primary" id="startTimer" title="Start">
+                            <svg id="playIcon" viewBox="0 0 24 24" width="20" height="20" fill="none">
+                                <path d="M9 6.5 17 12l-8 5.5V6.5Z" fill="currentColor" />
+                            </svg>
+                            <svg id="pauseIcon" viewBox="0 0 24 24" width="20" height="20" fill="none"
+                                style="display:none">
+                                <path d="M8 6v12M16 6v12" stroke="currentColor" stroke-width="2.2"
+                                    stroke-linecap="round" />
+                            </svg>
+                        </button>
+
+                        <button class="circle-btn" id="skipTimer" title="Skip">
+                            <svg viewBox="0 0 24 24" width="19" height="19" fill="none">
+                                <path d="m7 6 7 6-7 6V6Z" fill="currentColor" />
+                                <path d="M17 6v12" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+                            </svg>
+                        </button>
+                    </div>
+                </section>
+            </aside>
+        </main>
+    </div>
+
+    <div class="bottom-right">
+        <button class="mini-icon" title="Menu" id="menuButton">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none">
+                <path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+        </button>
+
+        <button class="mini-icon" title="Settings" id="settingsButton">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none">
+                <path d="M12 8.4a3.6 3.6 0 1 0 0 7.2 3.6 3.6 0 0 0 0-7.2Z" stroke="currentColor" stroke-width="1.7" />
+                <path
+                    d="m19.2 13.2 1.1 1-.9 1.5-1.4-.4a7.1 7.1 0 0 1-1.6 1l-.2 1.5h-1.8l-.4-1.4a7.1 7.1 0 0 1-1.9 0l-.4 1.4H10l-.2-1.5a7.1 7.1 0 0 1-1.6-1l-1.4.4-.9-1.5 1.1-1a6.2 6.2 0 0 1 0-2.4l-1.1-1 .9-1.5 1.4.4a7.1 7.1 0 0 1 1.6-1L10 6.2h1.8l.4 1.4a7.1 7.1 0 0 1 1.9 0l.4-1.4h1.8l.2 1.5a7.1 7.1 0 0 1 1.6 1l1.4-.4.9 1.5-1.1 1a6.2 6.2 0 0 1 0 2.4Z"
+                    stroke="currentColor" stroke-width="1.35" stroke-linejoin="round" />
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        /* ---------------- Search ---------------- */
+
+        const searchForm = document.getElementById("searchForm");
+        const searchInput = document.getElementById("searchInput");
+
+        searchForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            window.location.href =
+                "https://www.google.com/search?q=" +
+                encodeURIComponent(query);
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (
+                event.key === "/" &&
+                document.activeElement !== searchInput
+            ) {
+                event.preventDefault();
+                searchInput.focus();
+            }
+        });
+
+        /* ---------------- Top status ---------------- */
+
+        const focusValue = document.getElementById("focusValue");
+        let focusSeconds = Number(localStorage.getItem("focusSeconds") || 0);
+
+        function renderFocus() {
+            const minutes = Math.floor(focusSeconds / 60);
+            focusValue.textContent = `${minutes}m`;
+        }
+
+        renderFocus();
+
+        function updateClock() {
+            const now = new Date();
+
+            const time = now.toLocaleTimeString([], {
+                hour: "numeric",
+                minute: "2-digit"
+            });
+
+            const day = now.toLocaleDateString([], {
+                weekday: "short",
+                month: "short",
+                day: "numeric"
+            });
+
+            document.getElementById("timeValue").textContent = time;
+            document.getElementById("dayLabel").textContent = day;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        /* ---------------- Tabs ---------------- */
+
+        const tabs = document.querySelectorAll(".tab");
+        const homeView = document.getElementById("homeView");
+        const projectsView = document.getElementById("projectsView");
+
+        tabs.forEach((tab) => {
+            tab.addEventListener("click", () => {
+                tabs.forEach((t) => t.classList.remove("active"));
+                tab.classList.add("active");
+
+                const view = tab.dataset.view;
+                homeView.style.display = view === "home" ? "block" : "none";
+                projectsView.classList.toggle("active", view === "projects");
+            });
+        });
+
+        /* ---------------- Calendar ---------------- */
+
+        const monthTitle = document.getElementById("monthTitle");
+        const calendarDays = document.getElementById("calendarDays");
+
+        let calendarDate = new Date();
+
+        function renderCalendar() {
+            const year = calendarDate.getFullYear();
+            const month = calendarDate.getMonth();
+
+            monthTitle.textContent = new Date(year, month, 1).toLocaleDateString([], {
+                month: "long",
+                year: "numeric"
+            });
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const lastDate = new Date(year, month + 1, 0).getDate();
+            const prevLastDate = new Date(year, month, 0).getDate();
+
+            const cells = [];
+
+            for (let i = firstDay - 1; i >= 0; i--) {
+                cells.push({
+                    day: prevLastDate - i,
+                    muted: true
+                });
+            }
+
+            for (let day = 1; day <= lastDate; day++) {
+                cells.push({
+                    day,
+                    muted: false
+                });
+            }
+
+            while (cells.length % 7 !== 0) {
+                cells.push({
+                    day: cells.length - lastDate - firstDay + 1,
+                    muted: true
+                });
+            }
+
+            calendarDays.innerHTML = "";
+
+            cells.forEach((cell) => {
+                const el = document.createElement("div");
+                el.className = "day" + (cell.muted ? " muted" : "");
+
+                if (
+                    !cell.muted &&
+                    cell.day === new Date().getDate() &&
+                    month === new Date().getMonth() &&
+                    year === new Date().getFullYear()
+                ) {
+                    el.classList.add("today");
+                }
+
+                el.textContent = cell.day;
+                calendarDays.appendChild(el);
+            });
+        }
+
+        document.getElementById("prevMonth").addEventListener("click", () => {
+            calendarDate.setMonth(calendarDate.getMonth() - 1);
+            renderCalendar();
+        });
+
+        document.getElementById("nextMonth").addEventListener("click", () => {
+            calendarDate.setMonth(calendarDate.getMonth() + 1);
+            renderCalendar();
+        });
+
+        renderCalendar();
+
+        /* ---------------- Pomodoro ---------------- */
+
+        const timerDisplay = document.getElementById("timer");
+        const startTimer = document.getElementById("startTimer");
+        const resetTimer = document.getElementById("resetTimer");
+        const skipTimer = document.getElementById("skipTimer");
+        const playIcon = document.getElementById("playIcon");
+        const pauseIcon = document.getElementById("pauseIcon");
+        const pomoTabs = document.querySelectorAll(".pomo-tab");
+
+        let selectedMinutes = 25;
+        let remainingSeconds = selectedMinutes * 60;
+        let timerId = null;
+        let focusRunningSeconds = 0;
+
+        function renderTimer() {
+            const mins = Math.floor(remainingSeconds / 60);
+            const secs = remainingSeconds % 60;
+
+            timerDisplay.textContent =
+                `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+        }
+
+        function setPlaying(playing) {
+            playIcon.style.display = playing ? "none" : "block";
+            pauseIcon.style.display = playing ? "block" : "none";
+        }
+
+        function stopTimer() {
+            clearInterval(timerId);
+            timerId = null;
+            setPlaying(false);
+        }
+
+        function startOrPause() {
+            if (timerId) {
+                stopTimer();
+                return;
+            }
+
+            timerId = setInterval(() => {
+                remainingSeconds--;
+
+                if (selectedMinutes === 25) {
+                    focusRunningSeconds++;
+                    focusSeconds++;
+                    localStorage.setItem("focusSeconds", String(focusSeconds));
+                    renderFocus();
+                }
+
+                if (remainingSeconds <= 0) {
+                    remainingSeconds = selectedMinutes * 60;
+                    stopTimer();
+                }
+
+                renderTimer();
+            }, 1000);
+
+            setPlaying(true);
+        }
+
+        function resetCurrentTimer() {
+            stopTimer();
+            remainingSeconds = selectedMinutes * 60;
+            renderTimer();
+        }
+
+        function changeMode(minutes, button) {
+            selectedMinutes = minutes;
+
+            pomoTabs.forEach((tab) => tab.classList.remove("active"));
+            button.classList.add("active");
+
+            resetCurrentTimer();
+        }
+
+        pomoTabs.forEach((button) => {
+            button.addEventListener("click", () => {
+                changeMode(Number(button.dataset.minutes), button);
+            });
+        });
+
+        startTimer.addEventListener("click", startOrPause);
+        resetTimer.addEventListener("click", resetCurrentTimer);
+
+        skipTimer.addEventListener("click", () => {
+            remainingSeconds = 0;
+            stopTimer();
+            renderTimer();
+        });
+
+        renderTimer();
+
+        /* ---------------- Buttons ---------------- */
+
+        document.getElementById("addProject").addEventListener("click", () => {
+            alert("You can add more tabs later by editing the project section.");
+        });
+
+        document.getElementById("menuButton").addEventListener("click", () => {
+            document.querySelector(".page").classList.toggle("menu-open");
+        });
+
+        document.getElementById("settingsButton").addEventListener("click", () => {
+            alert(
+                "Settings are kept simple for now. Edit the categories, links, accent color and wallpaper path directly in index.html."
+            );
+        });
+
+        /* ---------------- Customization ----------------
+           Change these CSS variables near the top:
+             --accent
+             --glass
+             --glass-strong
+    
+           The wallpaper is:
+             one_piece.jpg
+    
+           Keep it beside index.html.
+        ------------------------------------------------- */
+    </script>
+</body>
+
+</html>
+'''
+
+path = Path("/mnt/data/index.html")
+path.write_text(html, encoding="utf-8")
+
+print(f"Created: {path}")
+print(f"Size: {path.stat().st_size:,} bytes")
