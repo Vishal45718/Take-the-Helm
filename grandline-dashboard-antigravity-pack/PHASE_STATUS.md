@@ -1,13 +1,13 @@
 # Grand Line Dashboard — Phase Status
-Current phase: 2 — Config-driven dashboard
-Status: COMPLETE
+Current phase: 3 — UI/state system
+Status: IN PROGRESS
 
 | Phase | Name | Status |
 |---|---|---|
 | 0 | Baseline and safety | COMPLETED |
 | 1 | Refactor | COMPLETE |
 | 2 | Config-driven dashboard | COMPLETE |
-| 3 | UI/state system | NOT STARTED |
+| 3 | UI/state system | IN PROGRESS |
 | 4 | Customization | NOT STARTED |
 | 5 | Search | NOT STARTED |
 | 6 | Widgets | NOT STARTED |

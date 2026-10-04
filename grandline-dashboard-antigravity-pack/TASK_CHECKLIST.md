@@ -18,7 +18,7 @@
 - [x] Remove repeated hardcoded markup
 
 ## Phase 3
-- [ ] Versioned local state layer
+- [x] Versioned local state layer
 - [ ] Replace alert() with toast/modal
 - [ ] Functional settings panel
 - [ ] Reset/default handling
