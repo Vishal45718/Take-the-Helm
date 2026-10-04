@@ -53,13 +53,20 @@ window.addEventListener('load', () => {
         closeBtn.click();
         assert(!overlay.classList.contains('show'), "Toast not hidden after clicking close");
         
-        // 2. Click Settings
+        // 2. Click Settings & Save to check toast
         const settingsBtn = document.getElementById("settingsButton");
         assert(settingsBtn, "Settings button not found");
         settingsBtn.click();
         
-        assert(overlay.classList.contains('show'), "Toast overlay not visible for settings");
-        assert(document.getElementById('toastMessage').textContent.includes("Settings are kept simple for now"), "Wrong message for settings");
+        const settingsOverlay = document.getElementById('settingsOverlay');
+        assert(settingsOverlay && settingsOverlay.classList.contains('show'), "Settings overlay not opened");
+        
+        const applyBtn = document.getElementById('settingsApplyBtn');
+        assert(applyBtn, "Settings apply button not found");
+        applyBtn.click();
+        
+        assert(overlay.classList.contains('show'), "Toast overlay not visible after saving settings");
+        assert(document.getElementById('toastMessage').textContent.includes("Settings applied!"), "Wrong message for settings save");
         
         // Close with Escape
         const event = new window.KeyboardEvent('keydown', { key: 'Escape' });
@@ -67,6 +74,7 @@ window.addEventListener('load', () => {
         assert(!overlay.classList.contains('show'), "Toast not hidden after Escape key");
         
         console.log("SUCCESS: All toast modal tests passed.");
+        process.exit(0);
     } catch (e) {
         console.error(e);
         process.exit(1);
