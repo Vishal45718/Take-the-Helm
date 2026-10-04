@@ -9,7 +9,10 @@ const DEFAULT_PREFERENCES = {
     accentColor: "#5fae2d",
     glassBlur: 11,
     glassOpacity: 0.29,
-    searchEngine: "google"
+    searchEngine: "google",
+    showStatus: true,
+    showCalendar: true,
+    showPomodoro: true
 };
 
 const DEFAULT_STATE = {
@@ -76,6 +79,10 @@ function validatePreferences(prefs) {
         validated.searchEngine = DEFAULT_PREFERENCES.searchEngine;
     }
     
+    validated.showStatus = typeof prefs.showStatus === "boolean" ? prefs.showStatus : DEFAULT_PREFERENCES.showStatus;
+    validated.showCalendar = typeof prefs.showCalendar === "boolean" ? prefs.showCalendar : DEFAULT_PREFERENCES.showCalendar;
+    validated.showPomodoro = typeof prefs.showPomodoro === "boolean" ? prefs.showPomodoro : DEFAULT_PREFERENCES.showPomodoro;
+
     return validated;
 }
 

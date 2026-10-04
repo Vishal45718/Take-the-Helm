@@ -399,6 +399,10 @@ function applyPreferences(prefs) {
     if (prefs.bgOpacity !== undefined) {
         document.documentElement.style.setProperty('--bg-overlay', prefs.bgOpacity);
     }
+    
+    document.body.classList.toggle('hide-status', !prefs.showStatus);
+    document.body.classList.toggle('hide-calendar', !prefs.showCalendar);
+    document.body.classList.toggle('hide-pomodoro', !prefs.showPomodoro);
 }
 
 // Apply initially
@@ -446,6 +450,18 @@ function showSettings() {
                             <option value="brave">Brave</option>
                         </select>
                     </div>
+                    <div class="settings-row">
+                        <label class="settings-label">Show Status/Clock</label>
+                        <input type="checkbox" id="setShowStatus">
+                    </div>
+                    <div class="settings-row">
+                        <label class="settings-label">Show Calendar</label>
+                        <input type="checkbox" id="setShowCalendar">
+                    </div>
+                    <div class="settings-row">
+                        <label class="settings-label">Show Pomodoro</label>
+                        <input type="checkbox" id="setShowPomodoro">
+                    </div>
                 </div>
                 <div class="settings-actions">
                     <button class="settings-btn" id="settingsResetBtn">Reset</button>
@@ -475,7 +491,10 @@ function showSettings() {
                 accentColor: document.getElementById('setAccentColor').value,
                 glassBlur: Number(document.getElementById('setGlassBlur').value),
                 glassOpacity: Number(document.getElementById('setGlassOpacity').value),
-                searchEngine: document.getElementById('setSearchEngine').value
+                searchEngine: document.getElementById('setSearchEngine').value,
+                showStatus: document.getElementById('setShowStatus').checked,
+                showCalendar: document.getElementById('setShowCalendar').checked,
+                showPomodoro: document.getElementById('setShowPomodoro').checked
             };
             AppState.update({ preferences: newPrefs });
             const validatedPrefs = AppState.data.preferences;
@@ -486,6 +505,9 @@ function showSettings() {
             document.getElementById('setGlassBlur').value = validatedPrefs.glassBlur;
             document.getElementById('setGlassOpacity').value = validatedPrefs.glassOpacity;
             document.getElementById('setSearchEngine').value = validatedPrefs.searchEngine;
+            document.getElementById('setShowStatus').checked = validatedPrefs.showStatus;
+            document.getElementById('setShowCalendar').checked = validatedPrefs.showCalendar;
+            document.getElementById('setShowPomodoro').checked = validatedPrefs.showPomodoro;
 
             applyPreferences(validatedPrefs);
             closeOverlay();
@@ -500,6 +522,9 @@ function showSettings() {
             document.getElementById('setGlassBlur').value = defaults.glassBlur;
             document.getElementById('setGlassOpacity').value = defaults.glassOpacity;
             document.getElementById('setSearchEngine').value = defaults.searchEngine;
+            document.getElementById('setShowStatus').checked = defaults.showStatus;
+            document.getElementById('setShowCalendar').checked = defaults.showCalendar;
+            document.getElementById('setShowPomodoro').checked = defaults.showPomodoro;
         });
     }
     
@@ -511,6 +536,9 @@ function showSettings() {
     document.getElementById('setGlassBlur').value = prefs.glassBlur;
     document.getElementById('setGlassOpacity').value = prefs.glassOpacity;
     document.getElementById('setSearchEngine').value = prefs.searchEngine;
+    document.getElementById('setShowStatus').checked = prefs.showStatus !== undefined ? prefs.showStatus : true;
+    document.getElementById('setShowCalendar').checked = prefs.showCalendar !== undefined ? prefs.showCalendar : true;
+    document.getElementById('setShowPomodoro').checked = prefs.showPomodoro !== undefined ? prefs.showPomodoro : true;
     
     overlay.classList.add('show');
 }

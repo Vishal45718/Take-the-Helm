@@ -30,7 +30,7 @@
 - [x] Blur
 - [x] Background overlay
 - [x] Settings validation/hardening
-- [ ] Widget visibility
+- [x] Widget visibility
 - [x] Persist preferences
 
 ## Phase 5

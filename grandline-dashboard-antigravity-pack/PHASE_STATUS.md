@@ -1,5 +1,5 @@
 # Grand Line Dashboard — Phase Status
-Current phase: 4 — Customization
+Current phase: 5 — Search
 Status: IN PROGRESS
 
 | Phase | Name | Status |
@@ -8,7 +8,7 @@ Status: IN PROGRESS
 | 1 | Refactor | COMPLETE |
 | 2 | Config-driven dashboard | COMPLETE |
 | 3 | UI/state system | COMPLETE |
-| 4 | Customization | IN PROGRESS |
+| 4 | Customization | COMPLETE |
 | 5 | Search | IN PROGRESS |
 | 6 | Widgets | NOT STARTED |
 | 7 | Productivity polish | NOT STARTED |

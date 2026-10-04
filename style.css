@@ -564,6 +564,35 @@ body::before {
     line-height: 1.5;
 }
 
+/* ---------------- Widget Visibility ---------------- */
+body.hide-status .status-bar {
+    display: none;
+}
+body.hide-status .topbar {
+    grid-template-columns: 290px minmax(320px, 1fr);
+}
+
+body.hide-calendar .calendar {
+    display: none;
+}
+body.hide-calendar:not(.hide-pomodoro) .side {
+    grid-template-rows: 1fr;
+}
+
+body.hide-pomodoro .pomodoro {
+    display: none;
+}
+body.hide-pomodoro:not(.hide-calendar) .side {
+    grid-template-rows: 1fr;
+}
+
+body.hide-calendar.hide-pomodoro .side {
+    display: none;
+}
+body.hide-calendar.hide-pomodoro .content {
+    grid-template-columns: 1fr;
+}
+
 /* Responsive */
 
 @media (max-width: 1150px) {
