@@ -478,7 +478,16 @@ function showSettings() {
                 searchEngine: document.getElementById('setSearchEngine').value
             };
             AppState.update({ preferences: newPrefs });
-            applyPreferences(newPrefs);
+            const validatedPrefs = AppState.data.preferences;
+            
+            document.getElementById('setWallpaper').value = validatedPrefs.wallpaper;
+            document.getElementById('setBgOpacity').value = validatedPrefs.bgOpacity;
+            document.getElementById('setAccentColor').value = validatedPrefs.accentColor;
+            document.getElementById('setGlassBlur').value = validatedPrefs.glassBlur;
+            document.getElementById('setGlassOpacity').value = validatedPrefs.glassOpacity;
+            document.getElementById('setSearchEngine').value = validatedPrefs.searchEngine;
+
+            applyPreferences(validatedPrefs);
             closeOverlay();
             showToast("Settings applied!");
         });

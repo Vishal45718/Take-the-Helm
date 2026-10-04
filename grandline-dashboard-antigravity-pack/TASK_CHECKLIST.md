@@ -29,6 +29,7 @@
 - [x] Glass opacity
 - [x] Blur
 - [x] Background overlay
+- [x] Settings validation/hardening
 - [ ] Widget visibility
 - [x] Persist preferences
 

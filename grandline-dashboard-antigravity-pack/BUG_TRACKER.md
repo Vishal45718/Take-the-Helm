@@ -12,3 +12,4 @@
 | BUG-009 | Low | No settings export/import | Open | 8 |
 | BUG-010 | Low | No widget drag/drop layout | Open | 7 |
 | BUG-011 | Medium | White wallpaper makes text hard to read without overlay | Closed | 4 |
+| BUG-012 | High | Malformed settings could crash dashboard | Closed | 4 |

@@ -31,11 +31,58 @@ function getLegacyFocusSeconds() {
     return 0;
 }
 
+function validatePreferences(prefs) {
+    if (!prefs || typeof prefs !== "object") return { ...DEFAULT_PREFERENCES };
+    const validated = {};
+    
+    if (typeof prefs.wallpaper === "string" && prefs.wallpaper.trim()) {
+        validated.wallpaper = prefs.wallpaper.trim();
+    } else {
+        validated.wallpaper = DEFAULT_PREFERENCES.wallpaper;
+    }
+
+    if (typeof prefs.bgOpacity === "number" && !isNaN(prefs.bgOpacity)) {
+        validated.bgOpacity = Math.max(0, Math.min(1, prefs.bgOpacity));
+    } else {
+        validated.bgOpacity = DEFAULT_PREFERENCES.bgOpacity;
+    }
+    
+    if (typeof prefs.accentColor === "string" && /^#[0-9A-Fa-f]{3,8}$/.test(prefs.accentColor.trim())) {
+        let hex = prefs.accentColor.trim();
+        if (hex.length === 4) {
+            hex = '#' + hex[1]+hex[1] + hex[2]+hex[2] + hex[3]+hex[3];
+        }
+        validated.accentColor = hex;
+    } else {
+        validated.accentColor = DEFAULT_PREFERENCES.accentColor;
+    }
+
+    if (typeof prefs.glassBlur === "number" && !isNaN(prefs.glassBlur)) {
+        validated.glassBlur = Math.max(0, Math.min(40, prefs.glassBlur));
+    } else {
+        validated.glassBlur = DEFAULT_PREFERENCES.glassBlur;
+    }
+    
+    if (typeof prefs.glassOpacity === "number" && !isNaN(prefs.glassOpacity)) {
+        validated.glassOpacity = Math.max(0, Math.min(1, prefs.glassOpacity));
+    } else {
+        validated.glassOpacity = DEFAULT_PREFERENCES.glassOpacity;
+    }
+    
+    const validEngines = ["google", "duckduckgo", "bing", "brave"];
+    if (typeof prefs.searchEngine === "string" && validEngines.includes(prefs.searchEngine.trim().toLowerCase())) {
+        validated.searchEngine = prefs.searchEngine.trim().toLowerCase();
+    } else {
+        validated.searchEngine = DEFAULT_PREFERENCES.searchEngine;
+    }
+    
+    return validated;
+}
+
 function loadState() {
     try {
         const raw = localStorage.getItem(STATE_KEY);
         if (!raw) {
-            // First time loading new state, try to migrate legacy
             const legacyFocus = getLegacyFocusSeconds();
             const initialState = { ...DEFAULT_STATE, focusSeconds: legacyFocus };
             saveState(initialState);
@@ -45,16 +92,13 @@ function loadState() {
 
         const data = JSON.parse(raw);
         
-        // Corrupted-data recovery
         if (!data || typeof data !== "object") {
             throw new Error("Invalid state format");
         }
         
-        // Merge with defaults to ensure all keys exist
         const state = { ...DEFAULT_STATE, ...data, version: STATE_VERSION };
-        state.preferences = { ...DEFAULT_PREFERENCES, ...(data.preferences || {}) };
+        state.preferences = validatePreferences(data.preferences);
         
-        // Remove legacy item if it exists and we successfully loaded new state
         try {
             localStorage.removeItem("focusSeconds");
         } catch (e) {}
@@ -83,6 +127,9 @@ window.AppState = {
         saveState(this.data);
     },
     update(updates) {
+        if (updates.preferences) {
+            updates.preferences = validatePreferences({ ...this.data.preferences, ...updates.preferences });
+        }
         this.data = { ...this.data, ...updates };
         this.save();
     },
