@@ -1,6 +1,6 @@
 # Grand Line Dashboard — Phase Status
-Current phase: 5 — Search
-Status: IN PROGRESS
+Current phase: 6 — Widgets
+Status: NOT STARTED
 
 | Phase | Name | Status |
 |---|---|---|
@@ -9,7 +9,7 @@ Status: IN PROGRESS
 | 2 | Config-driven dashboard | COMPLETE |
 | 3 | UI/state system | COMPLETE |
 | 4 | Customization | COMPLETE |
-| 5 | Search | IN PROGRESS |
+| 5 | Search | COMPLETE |
 | 6 | Widgets | NOT STARTED |
 | 7 | Productivity polish | NOT STARTED |
 | 8 | Data durability | NOT STARTED |

@@ -10,15 +10,34 @@ const searchEngines = {
     brave: "https://search.brave.com/search?q="
 };
 
+/**
+ * Build a safe search URL for the given query and provider.
+ * Returns null for empty/whitespace queries; unknown providers
+ * fall back to google. Pure function — no side effects.
+ *
+ * @param {string} query    — raw user input
+ * @param {string} provider — one of the keys in searchEngines
+ * @returns {string|null}
+ */
+function buildSearchUrl(query, provider) {
+    const trimmed = (query || "").trim();
+    if (!trimmed) return null;
+    const baseUrl = searchEngines[provider] || searchEngines.google;
+    return baseUrl + encodeURIComponent(trimmed);
+}
+
+// Expose on window for testability
+window.searchEngines  = searchEngines;
+window.buildSearchUrl = buildSearchUrl;
+
+
 searchForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const query = searchInput.value.trim();
-    if (!query) return;
-
     const engine = AppState.data.preferences.searchEngine || "google";
-    const baseUrl = searchEngines[engine] || searchEngines.google;
-    window.location.href = baseUrl + encodeURIComponent(query);
+    const url = buildSearchUrl(searchInput.value, engine);
+    if (!url) return;
+    window.location.href = url;
 });
 
 document.addEventListener("keydown", (event) => {
@@ -30,6 +49,7 @@ document.addEventListener("keydown", (event) => {
         searchInput.focus();
     }
 });
+
 
 /* ---------------- Top status ---------------- */
 

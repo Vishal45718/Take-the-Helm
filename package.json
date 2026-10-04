@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test-state.js && node test-hardening.js && node test-settings.js && node test-toast.js && node test-visibility.js && node test-wallpaper.js && node test-search.js"
   },
   "repository": {
     "type": "git",
