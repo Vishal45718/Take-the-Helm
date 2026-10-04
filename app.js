@@ -315,10 +315,59 @@ skipTimer.addEventListener("click", () => {
 
 renderTimer();
 
+/* ---------------- Toast Notification ---------------- */
+
+function showToast(message) {
+    let overlay = document.getElementById('toastOverlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'toastOverlay';
+        overlay.className = 'toast-overlay';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        
+        const modal = document.createElement('div');
+        modal.className = 'toast-modal';
+        
+        const msgEl = document.createElement('div');
+        msgEl.className = 'toast-message';
+        msgEl.id = 'toastMessage';
+        
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'toast-close';
+        closeBtn.textContent = 'Dismiss';
+        
+        modal.appendChild(msgEl);
+        modal.appendChild(closeBtn);
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        
+        const closeToast = () => {
+            overlay.classList.remove('show');
+        };
+        
+        closeBtn.addEventListener('click', closeToast);
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeToast();
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && overlay.classList.contains('show')) {
+                closeToast();
+            }
+        });
+    }
+    
+    document.getElementById('toastMessage').textContent = message;
+    overlay.classList.add('show');
+    const closeBtn = overlay.querySelector('.toast-close');
+    setTimeout(() => closeBtn.focus(), 50);
+}
+
 /* ---------------- Buttons ---------------- */
 
 document.getElementById("addProject").addEventListener("click", () => {
-    alert("You can add more tabs later by editing the project section.");
+    showToast("You can add more tabs later by editing the project section.");
 });
 
 document.getElementById("menuButton").addEventListener("click", () => {
@@ -326,7 +375,7 @@ document.getElementById("menuButton").addEventListener("click", () => {
 });
 
 document.getElementById("settingsButton").addEventListener("click", () => {
-    alert(
+    showToast(
         "Settings are kept simple for now. Edit the categories, links, accent color and wallpaper path directly in index.html."
     );
 });
