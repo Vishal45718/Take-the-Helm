@@ -1,12 +1,12 @@
-# ⚓ Grand Line Dashboard — Take the Helm
+#  Grand Line Dashboard — Take the Helm
 
 A sleek, local-first, glassmorphism new-tab dashboard for **Firefox** and modern web browsers. Built with zero dependencies, 100% native HTML5, CSS3, and Vanilla JavaScript (ES6+).
 
 ---
 
-## 🌟 Features
+##  Features
 
-- **🎨 Glassmorphism & Theme Customization**
+- ** Glassmorphism & Theme Customization**
   - Custom background wallpaper URLs and local asset support.
   - Dynamic background overlay opacity control ($0.0 - 1.0$).
   - Adjustable glass blur strength ($0\text{px} - 30\text{px}$) and opacity.
@@ -17,28 +17,28 @@ A sleek, local-first, glassmorphism new-tab dashboard for **Firefox** and modern
   - Safe URI encoding (`encodeURIComponent`) for query parameters and Unicode strings.
   - Quick-focus keyboard shortcut (`/` key to focus the search bar).
 
-- **⏳ Pomodoro & Focus Time Tracker**
+- ** Pomodoro & Focus Time Tracker**
   - Built-in timer with presets for **Focus (25m)**, **Short Break (5m)**, and **Long Break (15m)**.
   - Second-by-second focus time tracking persisted across sessions.
 
-- **📅 Interactive Calendar & Clock**
+- ** Interactive Calendar & Clock**
   - Monthly calendar navigator with today-highlighting and smooth navigation.
   - Real-time clock and day display.
 
-- **📌 Config-Driven Bookmark & Project Hub**
+- ** Config-Driven Bookmark & Project Hub**
   - Dynamic category rendering (**Work**, **AI**, **Entertainment**, **Learn**, **Social**) via [`config.js`](file:///home/jonsnow/firefox-newtab/config.js).
   - Clean project showcase cards for personal projects and quick links.
 
-- **🛡️ Hardened State Management Layer**
+- ** Hardened State Management Layer**
   - Schema-versioned local storage integration ([`state.js`](file:///home/jonsnow/firefox-newtab/state.js)).
   - Automated state sanitization, boundary clamping, hex-color normalization, and graceful fallback to defaults on corrupted state.
 
-- **👁️ Dynamic Widget Visibility Toggles**
+- ** Dynamic Widget Visibility Toggles**
   - Settings drawer toggles to selectively show or hide the status bar, calendar, and Pomodoro widgets.
 
 ---
 
-## 📁 Repository Architecture
+##  Repository Architecture
 
 ```
 firefox-newtab/
@@ -60,7 +60,7 @@ firefox-newtab/
 
 ---
 
-## 🚀 Quick Start & How to Run
+##  Quick Start & How to Run
 
 Because **Grand Line Dashboard** is built with zero framework dependencies, running it is instantaneous.
 
@@ -191,6 +191,6 @@ const DASHBOARD_CONFIG = {
 
 ---
 
-## 📜 License
+##  License
 
 Distributed under the MIT License. See `LICENSE` for details.
