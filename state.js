@@ -30,6 +30,7 @@ function loadState() {
             const legacyFocus = getLegacyFocusSeconds();
             const initialState = { ...DEFAULT_STATE, focusSeconds: legacyFocus };
             saveState(initialState);
+            try { localStorage.removeItem("focusSeconds"); } catch (e) {}
             return initialState;
         }
 
