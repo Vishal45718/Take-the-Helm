@@ -12,10 +12,10 @@
 - [x] Verify visual/functional parity
 
 ## Phase 2
-- [ ] Move categories/links to config
-- [ ] Render dynamically
-- [ ] Validate config
-- [ ] Remove repeated hardcoded markup
+- [x] Move categories/links to config
+- [x] Render dynamically
+- [x] Validate config
+- [x] Remove repeated hardcoded markup
 
 ## Phase 3
 - [ ] Versioned local state layer

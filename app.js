@@ -27,10 +27,9 @@ document.addEventListener("keydown", (event) => {
 /* ---------------- Top status ---------------- */
 
 const focusValue = document.getElementById("focusValue");
-let focusSeconds = Number(localStorage.getItem("focusSeconds") || 0);
 
 function renderFocus() {
-    const minutes = Math.floor(focusSeconds / 60);
+    const minutes = Math.floor(AppState.data.focusSeconds / 60);
     focusValue.textContent = `${minutes}m`;
 }
 
@@ -56,6 +55,80 @@ function updateClock() {
 
 updateClock();
 setInterval(updateClock, 1000);
+
+/* ---------------- Dynamic Dashboard Rendering ---------------- */
+
+function renderDashboard() {
+    if (typeof validateDashboardConfig === "function" && typeof DASHBOARD_CONFIG !== "undefined") {
+        validateDashboardConfig(DASHBOARD_CONFIG);
+    }
+
+    const boardGrid = document.getElementById("boardGrid");
+    const projectList = document.getElementById("projectList");
+
+    if (boardGrid && typeof DASHBOARD_CONFIG !== "undefined" && Array.isArray(DASHBOARD_CONFIG.categories)) {
+        boardGrid.innerHTML = "";
+
+        DASHBOARD_CONFIG.categories.forEach((category) => {
+            const panel = document.createElement("section");
+            panel.className = "panel";
+
+            const heading = document.createElement("h2");
+            heading.textContent = category.title;
+            panel.appendChild(heading);
+
+            const linkList = document.createElement("div");
+            linkList.className = "link-list";
+
+            if (Array.isArray(category.links)) {
+                category.links.forEach((link) => {
+                    const linkRow = document.createElement("a");
+                    linkRow.className = "link-row";
+                    linkRow.href = link.url;
+                    linkRow.target = link.target || "_blank";
+                    linkRow.rel = link.rel || "noopener";
+
+                    const img = document.createElement("img");
+                    img.className = "favicon";
+                    img.src = link.icon;
+                    img.alt = "";
+
+                    const span = document.createElement("span");
+                    span.className = "link-name";
+                    span.textContent = link.name;
+
+                    linkRow.appendChild(img);
+                    linkRow.appendChild(span);
+                    linkList.appendChild(linkRow);
+                });
+            }
+
+            panel.appendChild(linkList);
+            boardGrid.appendChild(panel);
+        });
+    }
+
+    if (projectList && DASHBOARD_CONFIG && Array.isArray(DASHBOARD_CONFIG.projects)) {
+        projectList.innerHTML = "";
+
+        DASHBOARD_CONFIG.projects.forEach((project) => {
+            const projectItem = document.createElement("div");
+            projectItem.className = "project-item";
+
+            const h3 = document.createElement("h3");
+            h3.textContent = project.title;
+
+            const p = document.createElement("p");
+            p.textContent = project.description;
+
+            projectItem.appendChild(h3);
+            projectItem.appendChild(p);
+            projectList.appendChild(projectItem);
+        });
+    }
+}
+
+renderDashboard();
 
 /* ---------------- Tabs ---------------- */
 
@@ -194,8 +267,8 @@ function startOrPause() {
 
         if (selectedMinutes === 25) {
             focusRunningSeconds++;
-            focusSeconds++;
-            localStorage.setItem("focusSeconds", String(focusSeconds));
+            AppState.data.focusSeconds++;
+            AppState.save();
             renderFocus();
         }
 
