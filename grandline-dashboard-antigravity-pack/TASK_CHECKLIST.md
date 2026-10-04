@@ -9,7 +9,7 @@
 - [x] Extract CSS to style.css
 - [x] Extract JS to app.js
 - [x] Remove dead/duplicate code
-- [ ] Verify visual/functional parity
+- [x] Verify visual/functional parity
 
 ## Phase 2
 - [ ] Move categories/links to config
