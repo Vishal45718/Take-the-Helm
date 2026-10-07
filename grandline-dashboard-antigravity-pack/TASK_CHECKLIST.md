@@ -40,10 +40,11 @@
 - [x] Optional Brave
 - [x] Provider selector + persistence
 - [x] Search keyboard UX (Phase 5.1 complete)
-- [x] Centralized searchEngines map (google, duckduckgo, bing, brave)
-- [x] buildSearchUrl() pure helper — safe URL generation via encodeURIComponent
-- [x] Provider validated through state.js validatePreferences()
+- [x] Centralized search-provider architecture in config.js (SEARCH_PROVIDERS for google, duckduckgo, bing, brave)
+- [x] buildSearchUrl() pure helper — safe URL generation via encodeURIComponent & template lookup
+- [x] Provider validated through state.js validatePreferences() and config.js validateSearchProviders()
 - [x] test-search.js — 16 tests (providers, encoding, empty, invalid, persistence, reload, keyboard)
+
 
 ## Phase 6
 - [ ] Widget abstraction

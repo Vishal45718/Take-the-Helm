@@ -57,11 +57,18 @@ window.addEventListener('load', () => {
         /* ── Grab the pure functions from the JSDOM window scope ── */
         const buildSearchUrl = window.buildSearchUrl;
         const searchEngines  = window.searchEngines;
+        const SEARCH_PROVIDERS = window.SEARCH_PROVIDERS;
+        const validateSearchProviders = window.validateSearchProviders;
 
         assert(typeof buildSearchUrl === 'function',
             'buildSearchUrl must be defined as a function in app.js');
         assert(searchEngines && typeof searchEngines === 'object',
             'searchEngines map must be defined in app.js');
+        assert(SEARCH_PROVIDERS && typeof SEARCH_PROVIDERS === 'object',
+            'SEARCH_PROVIDERS map must be defined in config.js');
+        assert(typeof validateSearchProviders === 'function' && validateSearchProviders(SEARCH_PROVIDERS),
+            'SEARCH_PROVIDERS in config.js must be valid');
+
 
         /* ════════════════════════════════════════════════════════
          * GROUP A — Pure function tests on buildSearchUrl()

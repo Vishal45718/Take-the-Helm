@@ -3,12 +3,19 @@
 const searchForm = document.getElementById("searchForm");
 const searchInput = document.getElementById("searchInput");
 
-const searchEngines = {
-    google: "https://www.google.com/search?q=",
-    duckduckgo: "https://duckduckgo.com/?q=",
-    bing: "https://www.bing.com/search?q=",
-    brave: "https://search.brave.com/search?q="
+const searchProviders = (typeof SEARCH_PROVIDERS !== "undefined" ? SEARCH_PROVIDERS : (typeof window !== "undefined" && window.SEARCH_PROVIDERS)) || {
+    google: { name: "Google", urlTemplate: "https://www.google.com/search?q={query}", baseUrl: "https://www.google.com/search?q=" },
+    duckduckgo: { name: "DuckDuckGo", urlTemplate: "https://duckduckgo.com/?q={query}", baseUrl: "https://duckduckgo.com/?q=" },
+    bing: { name: "Bing", urlTemplate: "https://www.bing.com/search?q={query}", baseUrl: "https://www.bing.com/search?q=" },
+    brave: { name: "Brave", urlTemplate: "https://search.brave.com/search?q={query}", baseUrl: "https://search.brave.com/search?q=" }
 };
+
+// Derived map of base URLs from config for backward compatibility and testing
+const searchEngines = Object.keys(searchProviders).reduce((acc, key) => {
+    const p = searchProviders[key];
+    acc[key] = typeof p === "string" ? p : (p.baseUrl || p.urlTemplate || "");
+    return acc;
+}, {});
 
 /**
  * Build a safe search URL for the given query and provider.
@@ -16,19 +23,44 @@ const searchEngines = {
  * fall back to google. Pure function — no side effects.
  *
  * @param {string} query    — raw user input
- * @param {string} provider — one of the keys in searchEngines
+ * @param {string} provider — one of the keys in searchProviders
  * @returns {string|null}
  */
 function buildSearchUrl(query, provider) {
     const trimmed = (query || "").trim();
     if (!trimmed) return null;
-    const baseUrl = searchEngines[provider] || searchEngines.google;
-    return baseUrl + encodeURIComponent(trimmed);
+
+    const providers = (typeof SEARCH_PROVIDERS !== "undefined" ? SEARCH_PROVIDERS : (typeof window !== "undefined" && window.SEARCH_PROVIDERS)) || searchProviders;
+    const selected = providers[provider] || providers.google;
+
+    const encodedQuery = encodeURIComponent(trimmed);
+
+    if (typeof selected === "string") {
+        if (selected.includes("{query}")) {
+            return selected.replace("{query}", encodedQuery);
+        }
+        return selected + encodedQuery;
+    }
+
+    if (selected && selected.urlTemplate) {
+        if (selected.urlTemplate.includes("{query}")) {
+            return selected.urlTemplate.replace("{query}", encodedQuery);
+        }
+        return selected.urlTemplate + encodedQuery;
+    }
+
+    if (selected && selected.baseUrl) {
+        return selected.baseUrl + encodedQuery;
+    }
+
+    return "https://www.google.com/search?q=" + encodedQuery;
 }
 
 // Expose on window for testability
-window.searchEngines  = searchEngines;
-window.buildSearchUrl = buildSearchUrl;
+window.searchEngines    = searchEngines;
+window.SEARCH_PROVIDERS = searchProviders;
+window.buildSearchUrl   = buildSearchUrl;
+
 
 
 searchForm.addEventListener("submit", (event) => {

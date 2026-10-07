@@ -285,13 +285,57 @@ function validateDashboardConfig(config) {
     };
 }
 
+
+const SEARCH_PROVIDERS = {
+    google: {
+        id: "google",
+        name: "Google",
+        urlTemplate: "https://www.google.com/search?q={query}",
+        baseUrl: "https://www.google.com/search?q="
+    },
+    duckduckgo: {
+        id: "duckduckgo",
+        name: "DuckDuckGo",
+        urlTemplate: "https://duckduckgo.com/?q={query}",
+        baseUrl: "https://duckduckgo.com/?q="
+    },
+    bing: {
+        id: "bing",
+        name: "Bing",
+        urlTemplate: "https://www.bing.com/search?q={query}",
+        baseUrl: "https://www.bing.com/search?q="
+    },
+    brave: {
+        id: "brave",
+        name: "Brave",
+        urlTemplate: "https://search.brave.com/search?q={query}",
+        baseUrl: "https://search.brave.com/search?q="
+    }
+};
+
+function validateSearchProviders(providers) {
+    if (!providers || typeof providers !== "object") return false;
+    const required = ["google", "duckduckgo", "bing", "brave"];
+    return required.every((key) => {
+        const p = providers[key];
+        if (!p) return false;
+        const template = typeof p === "string" ? p : (p.urlTemplate || p.baseUrl);
+        return typeof template === "string" && template.startsWith("https://");
+    });
+}
+
 if (typeof window !== "undefined") {
     window.DASHBOARD_CONFIG = DASHBOARD_CONFIG;
     window.validateDashboardConfig = validateDashboardConfig;
+    window.SEARCH_PROVIDERS = SEARCH_PROVIDERS;
+    window.validateSearchProviders = validateSearchProviders;
 }
 if (typeof module !== "undefined" && module.exports) {
     module.exports = {
         DASHBOARD_CONFIG,
-        validateDashboardConfig
+        validateDashboardConfig,
+        SEARCH_PROVIDERS,
+        validateSearchProviders
     };
 }
+
